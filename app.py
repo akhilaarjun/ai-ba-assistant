@@ -16,15 +16,17 @@ st.markdown("Transform unstructured stakeholder transcripts into structured User
 with st.sidebar:
     st.header("⚙️ Configuration")
     
-  # Show input box EMPTY by default so visitors never see your key
+#api key
     user_pasted_key = st.text_input(
         "Gemini API Key (Optional):", 
+        value="",
         type="password", 
+        key="user_provided_api_key_field",
         help="Leave blank to use default portfolio key, or enter your own free key from Google AI Studio."
     )
     
     # Priority: 1. User pasted key -> 2. Streamlit Secrets key -> 3. Blank
-    api_key = user_pasted_key if user_pasted_key.strip() else st.secrets.get("GEMINI_API_KEY", "")
+    api_key = user_pasted_key.strip() if user_pasted_key.strip() else st.secrets.get("GEMINI_API_KEY", "")
     
     st.caption("Get a free key at [aistudio.google.com](https://aistudio.google.com/)")
     
