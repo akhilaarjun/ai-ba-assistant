@@ -8,15 +8,15 @@ st.set_page_config(
     layout="wide"
 )
 
-# App Title & Professional Subtitle
+# App Title 
 st.title("💼 Enterprise Requirement Engineering Assistant")
 st.markdown("Transform unstructured stakeholder transcripts into structured User Stories, Gherkin Criteria, and Jira-ready exports.")
 
-# Sidebar for Configuration & Portfolio Notes
+# Sidebar for Configuration and Portfolio Notes
 with st.sidebar:
     st.header("⚙️ Configuration")
     
-    # Allows fallback to Streamlit secrets if you set one up later, otherwise asks user
+    # Allows fallback to Streamlit secrets if you set one up later or otherwise asks user
     default_key = st.secrets.get("GEMINI_API_KEY", "") if "GEMINI_API_KEY" in st.secrets else ""
     api_key = st.text_input("Gemini API Key:", value=default_key, type="password", help="Enter your key or use a free key from Google AI Studio.")
     
@@ -87,13 +87,18 @@ if st.button("🚀 Process Requirements", type="primary"):
             with tab1:
                 st.subheader("User Stories")
                 for story in requirements.get("user_stories", []):
-                    st.info(f"**[{story['id']}]** {story['full_story']}")
+                    story_id = story.get("id", "US")
+                    # Safe story text retrieval with fallback formatting
+                    story_text = story.get("full_story") or f"As a {story.get('role', 'user')}, I want to {story.get('action', '')}, so that {story.get('benefit', '')}."
+                    st.info(f"**[{story_id}]** {story_text}")
 
             with tab2:
                 st.subheader("Gherkin Acceptance Criteria")
                 for ac in requirements.get("acceptance_criteria", []):
-                    st.markdown(f"**Story Reference:** `{ac['story_id']}`")
-                    st.code(ac['gherkin'], language="gherkin")
+                    story_ref = ac.get('story_id', 'US')
+                    gherkin_code = ac.get('gherkin', 'N/A')
+                    st.markdown(f"**Story Reference:** `{story_ref}`")
+                    st.code(gherkin_code, language="gherkin")
 
             with tab3:
                 st.subheader("Technical & Non-Functional Specifications")
